@@ -42,6 +42,7 @@ excludedJars in assembly <<= (fullClasspath in assembly) map { cp =>
     case "commons-beanutils-1.7.0.jar" => true
     case "commons-beanutils-core-1.8.0.jar" => true
     case "slf4j-log4j12-1.7.5.jar" => true
+    case "joda-time-2.8.2.jar" => true
     case _ => false
   }}
 }
