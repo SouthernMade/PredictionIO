@@ -36,7 +36,7 @@ elasticsearchVersion in ThisBuild := "2.1.1"
 
 json4sVersion in ThisBuild := "3.2.10"
 
-sparkVersion in ThisBuild := "1.5.1"
+sparkVersion in ThisBuild := "1.5.2"
 
 lazy val pioBuildInfoSettings = buildInfoSettings ++ Seq(
   sourceGenerators in Compile <+= buildInfo,
