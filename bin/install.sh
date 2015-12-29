@@ -10,14 +10,13 @@
 
 OS=`uname`
 PIO_VERSION=0.9.5
-SPARK_VERSION=1.5.1
-ELASTICSEARCH_VERSION=1.4.4
-HBASE_VERSION=1.0.0
+SPARK_VERSION=1.5.2
+ELASTICSEARCH_VERSION=2.1.1
+HBASE_VERSION=1.0.2
 POSTGRES_VERSION=9.4-1204.jdbc41
 MYSQL_VERSION=5.1.37
-PIO_DIR=$HOME/PredictionIO
+PIO_DIR=/opt/PredictionIO-${PIO_VERSION}
 USER_PROFILE=$HOME/.profile
-PIO_FILE=PredictionIO-${PIO_VERSION}.tar.gz
 TEMP_DIR=/tmp
 
 DISTRO_DEBIAN="Debian/Ubuntu"
@@ -160,24 +159,6 @@ else
       esac
     done
 
-    if confirm "Receive updates?"; then
-      guess_email=''
-      if hash git 2>/dev/null; then
-        # Git installed!
-        guess_email=$(git config --global user.email)
-      fi
-
-      if [ -n "${guess_email}" ]; then
-        read -e -p "Email (${guess_email}): " email
-      else
-        read -e -p "Enter email: " email
-      fi
-      email=${email:-$guess_email}
-
-      url="http://direct.prediction.io/$PIO_VERSION/install.json/install/install/$email/"
-      curl --silent ${url} > /dev/null
-    fi
-
     spark_dir=${vendors_dir}/spark-${SPARK_VERSION}
     elasticsearch_dir=${vendors_dir}/elasticsearch-${ELASTICSEARCH_VERSION}
     hbase_dir=${vendors_dir}/hbase-${HBASE_VERSION}
@@ -277,21 +258,6 @@ echo "JAVA_HOME is now set to: $JAVA_HOME"
 echo -e "\033[1;36mStarting PredictionIO setup in:\033[0m $pio_dir"
 cd ${TEMP_DIR}
 
-# delete existing tmp file before download again
-if [[ -e  ${PIO_FILE} ]]; then
-  if confirm "Delete existing $PIO_FILE?"; then
-    rm ${PIO_FILE}
-  fi
-fi
-
-if [[ ! -e ${PIO_FILE} ]]; then
-  echo "Downloading PredictionIO..."
-  curl -O https://d8k1yxp8elc6b.cloudfront.net/${PIO_FILE}
-fi
-tar zxf ${PIO_FILE}
-rm -rf ${pio_dir}
-mv PredictionIO-${PIO_VERSION} ${pio_dir}
-
 if [[ $USER ]]; then
   chown -R $USER ${pio_dir}
 fi
@@ -371,7 +337,7 @@ case $source_setup in
     fi
     if [[ ! -e elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz ]]; then
       echo "Downloading Elasticsearch..."
-      curl -O https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz
+      curl -O https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/${ELASTICSEARCH_VERSION}/elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz
     fi
     tar zxf elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz
     rm -rf ${elasticsearch_dir}
@@ -400,7 +366,7 @@ case $source_setup in
     fi
     if [[ ! -e hbase-${HBASE_VERSION}-bin.tar.gz ]]; then
       echo "Downloading HBase..."
-      curl -O http://archive.apache.org/dist/hbase/hbase-${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz
+      curl -O https://archive.apache.org/dist/hbase/hbase-${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz
     fi
     tar zxf hbase-${HBASE_VERSION}-bin.tar.gz
     rm -rf ${hbase_dir}
