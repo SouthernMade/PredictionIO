@@ -45,7 +45,7 @@ excludedJars in assembly <<= (fullClasspath in assembly) map { cp =>
 }
 
 assemblyShadeRules in assembly := Seq(
-  ShadeRule.rename("org.joda.time.base.**" -> "shadeio.@1").inLibrary("joda-time" % "joda-time" % "2.8.2").inProject
+  ShadeRule.rename("org.joda.time.base.**" -> "shadeio.@1").inLibrary("org.elasticsearch" % "elasticsearch" % elasticsearchVersion.value).inProject
 )
 
 // skip test in assembly
