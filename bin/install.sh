@@ -14,6 +14,7 @@ PIO_VERSION=0.9.5
 SPARK_VERSION=1.5.2
 ELASTICSEARCH_VERSION=2.1.1
 HBASE_VERSION=1.0.2
+HADOOP_VERSION=2.6
 PIO_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 USER_PROFILE=$HOME/.profile
 TEMP_DIR=/tmp
@@ -88,15 +89,13 @@ echo "export PATH=\$PATH:$pio_dir/bin" >> ${USER_PROFILE}
 # Spark
 ##################################
 echo -e "\033[1;36mStarting Spark setup in:\033[0m $spark_dir"
-if [[ -e spark-${SPARK_VERSION}-bin-hadoop2.6.tgz ]]; then
-  rm spark-${SPARK_VERSION}-bin-hadoop2.6.tgz
+if [[ ! -e spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz ]]; then
+  echo "Downloading Spark..."
+  curl -O http://d3kbcqa49mib13.cloudfront.net/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz
 fi
-
-echo "Downloading Spark..."
-curl -O http://d3kbcqa49mib13.cloudfront.net/spark-${SPARK_VERSION}-bin-hadoop2.6.tgz
-tar xf spark-${SPARK_VERSION}-bin-hadoop2.6.tgz
+tar zxf spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz
 rm -rf ${spark_dir}
-mv spark-${SPARK_VERSION}-bin-hadoop2.6 ${spark_dir}
+mv spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION} ${spark_dir}
 
 echo "Updating: $pio_dir/conf/pio-env.sh"
 ${SED_CMD} "s|SPARK_HOME=.*|SPARK_HOME=$spark_dir|g" ${pio_dir}/conf/pio-env.sh
@@ -107,9 +106,6 @@ echo -e "\033[1;32mSpark setup done!\033[0m"
 # Elasticsearch
 ##################################
 echo -e "\033[1;36mStarting Elasticsearch setup in:\033[0m $elasticsearch_dir"
-if [[ -e elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz ]]; then
-  rm elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz
-fi
 if [[ ! -e elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz ]]; then
   echo "Downloading Elasticsearch..."
   curl -O https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/${ELASTICSEARCH_VERSION}/elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz
@@ -136,12 +132,10 @@ echo -e "\033[1;32mElasticsearch setup done!\033[0m"
 # HBase
 ##################################
 echo -e "\033[1;36mStarting HBase setup in:\033[0m $hbase_dir"
-if [[ -e hbase-${HBASE_VERSION}-bin.tar.gz ]]; then
-  rm hbase-${HBASE_VERSION}-bin.tar.gz
+if [[ ! -e hbase-${HBASE_VERSION}-bin.tar.gz ]]; then
+  echo "Downloading HBase..."
+  curl -O https://archive.apache.org/dist/hbase/hbase-${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz
 fi
-
-echo "Downloading HBase..."
-curl -O https://archive.apache.org/dist/hbase/hbase-${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz
 tar zxf hbase-${HBASE_VERSION}-bin.tar.gz
 rm -rf ${hbase_dir}
 mv hbase-${HBASE_VERSION} ${hbase_dir}
