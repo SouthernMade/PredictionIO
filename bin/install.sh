@@ -115,8 +115,6 @@ mv elasticsearch-${ELASTICSEARCH_VERSION} ${elasticsearch_dir}
 
 echo "Updating: $elasticsearch_dir/config/elasticsearch.yml"
 echo 'network.host: 127.0.0.1' >> ${elasticsearch_dir}/config/elasticsearch.yml
-echo 'node.master: false' >> ${elasticsearch_dir}/config/elasticsearch.yml
-echo 'node.data: false' >> ${elasticsearch_dir}/config/elasticsearch.yml
 
 echo -e "\033[1;32mElasticsearch setup done!\033[0m"
 
