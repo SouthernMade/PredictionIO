@@ -88,6 +88,7 @@ echo "export PATH=\$PATH:$pio_dir/bin" >> ${USER_PROFILE}
 ##################################
 # Spark
 ##################################
+
 echo -e "\033[1;36mStarting Spark setup in:\033[0m $spark_dir"
 if [[ ! -e spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz ]]; then
   echo "Downloading Spark..."
@@ -97,14 +98,12 @@ tar zxf spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz
 rm -rf ${spark_dir}
 mv spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION} ${spark_dir}
 
-echo "Updating: $pio_dir/conf/pio-env.sh"
-${SED_CMD} "s|SPARK_HOME=.*|SPARK_HOME=$spark_dir|g" ${pio_dir}/conf/pio-env.sh
-
 echo -e "\033[1;32mSpark setup done!\033[0m"
 
 ##################################
 # Elasticsearch
 ##################################
+
 echo -e "\033[1;36mStarting Elasticsearch setup in:\033[0m $elasticsearch_dir"
 if [[ ! -e elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz ]]; then
   echo "Downloading Elasticsearch..."
@@ -116,21 +115,15 @@ mv elasticsearch-${ELASTICSEARCH_VERSION} ${elasticsearch_dir}
 
 echo "Updating: $elasticsearch_dir/config/elasticsearch.yml"
 echo 'network.host: 127.0.0.1' >> ${elasticsearch_dir}/config/elasticsearch.yml
-
-echo "Updating: $pio_dir/conf/pio-env.sh"
-${SED_CMD} "s|PIO_STORAGE_REPOSITORIES_METADATA_SOURCE=PGSQL|PIO_STORAGE_REPOSITORIES_METADATA_SOURCE=ELASTICSEARCH|" ${pio_dir}/conf/pio-env.sh
-${SED_CMD} "s|PIO_STORAGE_REPOSITORIES_MODELDATA_SOURCE=PGSQL|PIO_STORAGE_REPOSITORIES_MODELDATA_SOURCE=LOCALFS|" ${pio_dir}/conf/pio-env.sh
-${SED_CMD} "s|PIO_STORAGE_REPOSITORIES_EVENTDATA_SOURCE=PGSQL|PIO_STORAGE_REPOSITORIES_EVENTDATA_SOURCE=HBASE|" ${pio_dir}/conf/pio-env.sh
-${SED_CMD} "s|PIO_STORAGE_SOURCES_PGSQL|# PIO_STORAGE_SOURCES_PGSQL|" ${pio_dir}/conf/pio-env.sh
-${SED_CMD} "s|# PIO_STORAGE_SOURCES_LOCALFS|PIO_STORAGE_SOURCES_LOCALFS|" ${pio_dir}/conf/pio-env.sh
-${SED_CMD} "s|# PIO_STORAGE_SOURCES_ELASTICSEARCH_TYPE|PIO_STORAGE_SOURCES_ELASTICSEARCH_TYPE|" ${pio_dir}/conf/pio-env.sh
-${SED_CMD} "s|# PIO_STORAGE_SOURCES_ELASTICSEARCH_HOME=.*|PIO_STORAGE_SOURCES_ELASTICSEARCH_HOME=$elasticsearch_dir|" ${pio_dir}/conf/pio-env.sh
+echo 'node.master: false' >> ${elasticsearch_dir}/config/elasticsearch.yml
+echo 'node.data: false' >> ${elasticsearch_dir}/config/elasticsearch.yml
 
 echo -e "\033[1;32mElasticsearch setup done!\033[0m"
 
 ##################################
 # HBase
 ##################################
+
 echo -e "\033[1;36mStarting HBase setup in:\033[0m $hbase_dir"
 if [[ ! -e hbase-${HBASE_VERSION}-bin.tar.gz ]]; then
   echo "Downloading HBase..."
@@ -140,30 +133,44 @@ tar zxf hbase-${HBASE_VERSION}-bin.tar.gz
 rm -rf ${hbase_dir}
 mv hbase-${HBASE_VERSION} ${hbase_dir}
 
-echo "Creating default site in: $hbase_dir/conf/hbase-site.xml"
-cat <<EOT > ${hbase_dir}/conf/hbase-site.xml
-<configuration>
-  <property>
-    <name>hbase.rootdir</name>
-    <value>file://${hbase_dir}/data</value>
-  </property>
-  <property>
-    <name>hbase.zookeeper.property.dataDir</name>
-    <value>${zookeeper_dir}</value>
-  </property>
-</configuration>
+if [[ $HBASE_ZOOKEEPER_QUORUM ]]; then
+  echo "Creating custom site in: $hbase_dir/conf/hbase-site.xml"
+  cat <<EOT > ${hbase_dir}/conf/hbase-site.xml
+  <configuration>
+    <property>
+      <name>hbase.zookeeper.quorum</name>
+      <value>${HBASE_ZOOKEEPER_QUORUM}</value>
+    </property>
+    <property>
+      <name>hbase.zookeeper.property.dataDir</name>
+      <value>${zookeeper_dir}</value>
+    </property>
+  </configuration>
 EOT
+else
+  echo "Creating default site in: $hbase_dir/conf/hbase-site.xml"
+  cat <<EOT > ${hbase_dir}/conf/hbase-site.xml
+  <configuration>
+    <property>
+      <name>hbase.rootdir</name>
+      <value>file://${hbase_dir}/data</value>
+    </property>
+    <property>
+      <name>hbase.zookeeper.property.dataDir</name>
+      <value>${zookeeper_dir}</value>
+    </property>
+  </configuration>
+EOT
+fi
 
 echo "Updating: $hbase_dir/conf/hbase-env.sh to include $JAVA_HOME"
 ${SED_CMD} "s|# export JAVA_HOME=/usr/java/jdk1.6.0/|export JAVA_HOME=$JAVA_HOME|" ${hbase_dir}/conf/hbase-env.sh
 
-echo "Updating: $pio_dir/conf/pio-env.sh"
-${SED_CMD} "s|# PIO_STORAGE_SOURCES_HBASE|PIO_STORAGE_SOURCES_HBASE|" ${pio_dir}/conf/pio-env.sh
-${SED_CMD} "s|PIO_STORAGE_SOURCES_HBASE_HOME=.*|PIO_STORAGE_SOURCES_HBASE_HOME=$hbase_dir|" ${pio_dir}/conf/pio-env.sh
-${SED_CMD} "s|# HBASE_CONF_DIR=.*|HBASE_CONF_DIR=$hbase_dir/conf|" ${pio_dir}/conf/pio-env.sh
-
 echo -e "\033[1;32mHBase setup done!\033[0m"
 
+##################################
+# Finalize install
+##################################
 
 echo "Updating permissions on: $vendors_dir"
 
