@@ -92,7 +92,7 @@ echo "export PATH=\$PATH:$pio_dir/bin" >> ${USER_PROFILE}
 echo -e "\033[1;36mStarting Spark setup in:\033[0m $spark_dir"
 if [[ ! -e spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz ]]; then
   echo "Downloading Spark..."
-  curl -O http://d3kbcqa49mib13.cloudfront.net/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz
+  aws s3 cp s3://southernmade-analytics-environments/vendor/spark/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz
 fi
 tar zxf spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz
 rm -rf ${spark_dir}
@@ -107,7 +107,7 @@ echo -e "\033[1;32mSpark setup done!\033[0m"
 echo -e "\033[1;36mStarting Elasticsearch setup in:\033[0m $elasticsearch_dir"
 if [[ ! -e elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz ]]; then
   echo "Downloading Elasticsearch..."
-  curl -O https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/${ELASTICSEARCH_VERSION}/elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz
+  aws s3 cp s3://southernmade-analytics-environments/vendor/elasticsearch/elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz
 fi
 tar zxf elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz
 rm -rf ${elasticsearch_dir}
@@ -125,7 +125,7 @@ echo -e "\033[1;32mElasticsearch setup done!\033[0m"
 echo -e "\033[1;36mStarting HBase setup in:\033[0m $hbase_dir"
 if [[ ! -e hbase-${HBASE_VERSION}-bin.tar.gz ]]; then
   echo "Downloading HBase..."
-  curl -O https://archive.apache.org/dist/hbase/hbase-${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz
+  aws s3 cp s3://southernmade-analytics-environments/vendor/hbase/hbase-${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz
 fi
 tar zxf hbase-${HBASE_VERSION}-bin.tar.gz
 rm -rf ${hbase_dir}
