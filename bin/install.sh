@@ -125,7 +125,7 @@ echo -e "\033[1;32mElasticsearch setup done!\033[0m"
 echo -e "\033[1;36mStarting HBase setup in:\033[0m $hbase_dir"
 if [[ ! -e hbase-${HBASE_VERSION}-bin.tar.gz ]]; then
   echo "Downloading HBase..."
-  aws s3 cp s3://southernmade-analytics-environments/vendor/hbase/hbase-${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz .
+  aws s3 cp s3://southernmade-analytics-environments/vendor/hbase/hbase-${HBASE_VERSION}-bin.tar.gz .
 fi
 tar zxf hbase-${HBASE_VERSION}-bin.tar.gz
 rm -rf ${hbase_dir}
