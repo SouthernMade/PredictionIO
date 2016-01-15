@@ -10,10 +10,10 @@
 # License: http://www.apache.org/licenses/LICENSE-2.0
 
 OS=`uname`
-PIO_VERSION=0.9.5
-SPARK_VERSION=1.5.2
+PIO_VERSION=0.9.5-SNAPSHOT
+SPARK_VERSION=1.6.0
 ELASTICSEARCH_VERSION=2.1.1
-HBASE_VERSION=1.0.2
+HBASE_VERSION=1.1.2
 HADOOP_VERSION=2.4
 PIO_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 USER_PROFILE=$HOME/.profile
