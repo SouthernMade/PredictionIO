@@ -18,6 +18,7 @@ package io.prediction.data.storage.hdfs
 import grizzled.slf4j.Logging
 import io.prediction.data.storage.BaseStorageClient
 import io.prediction.data.storage.StorageClientConfig
+import java.net.URI
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.FileSystem
 import org.apache.hadoop.fs.Path
@@ -26,8 +27,9 @@ class StorageClient(val config: StorageClientConfig) extends BaseStorageClient
     with Logging {
   override val prefix = "HDFS"
   val conf = new Configuration
-  val fs = FileSystem.get(conf)
+  val props = config.properties
+  val fs = FileSystem.get(new URI(props.getOrElse("HOSTS", props("PATH"))), conf)
   fs.setWorkingDirectory(
-    new Path(config.properties.getOrElse("PATH", config.properties("HOSTS"))))
+    new Path(props.getOrElse("PATH", props("HOSTS"))))
   val client = fs
 }
