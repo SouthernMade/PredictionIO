@@ -18,7 +18,7 @@ import UnidocKeys._
 
 name := "pio"
 
-version in ThisBuild := "0.9.5-SNAPSHOT"
+version in ThisBuild := "0.9.6"
 
 organization in ThisBuild := "io.prediction"
 
@@ -184,3 +184,11 @@ pomExtra in ThisBuild := {
     </developer>
   </developers>
 }
+
+concurrentRestrictions in Global := Seq(
+  Tags.limit(Tags.CPU, 1),
+  Tags.limit(Tags.Network, 1),
+  Tags.limit(Tags.Test, 1),
+  Tags.limitAll( 1 )
+)
+

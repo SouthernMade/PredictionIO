@@ -10,12 +10,14 @@
 # License: http://www.apache.org/licenses/LICENSE-2.0
 
 OS=`uname`
-PIO_VERSION=0.9.5-SNAPSHOT
+PIO_VERSION=0.9.6
 SPARK_VERSION=1.6.0
-ELASTICSEARCH_VERSION=2.1.1
+# Looks like support for Elasticsearch 2.0 will require 2.0 so deferring
+ELASTICSEARCH_VERSION=1.7.3
 HBASE_VERSION=1.1.2
-HADOOP_VERSION=2.4
-PIO_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
+POSTGRES_VERSION=9.4-1204.jdbc41
+MYSQL_VERSION=5.1.37
+PIO_DIR=$HOME/PredictionIO
 USER_PROFILE=$HOME/.profile
 TEMP_DIR=/tmp
 
@@ -118,9 +120,20 @@ echo 'network.host: 127.0.0.1' >> ${elasticsearch_dir}/config/elasticsearch.yml
 
 echo -e "\033[1;32mElasticsearch setup done!\033[0m"
 
-##################################
 # HBase
-##################################
+echo -e "\033[1;36mStarting HBase setup in:\033[0m $hbase_dir"
+if [[ -e hbase-${HBASE_VERSION}-bin.tar.gz ]]; then
+  if confirm "Delete existing hbase-$HBASE_VERSION-bin.tar.gz?"; then
+    rm hbase-${HBASE_VERSION}-bin.tar.gz
+  fi
+fi
+if [[ ! -e hbase-${HBASE_VERSION}-bin.tar.gz ]]; then
+  echo "Downloading HBase..."
+  curl -O http://archive.apache.org/dist/hbase/${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz
+fi
+tar zxf hbase-${HBASE_VERSION}-bin.tar.gz
+rm -rf ${hbase_dir}
+mv hbase-${HBASE_VERSION} ${hbase_dir}
 
 echo -e "\033[1;36mStarting HBase setup in:\033[0m $hbase_dir"
 if [[ ! -e hbase-${HBASE_VERSION}-bin.tar.gz ]]; then
