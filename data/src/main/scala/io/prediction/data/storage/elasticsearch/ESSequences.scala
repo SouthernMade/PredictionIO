@@ -30,9 +30,6 @@ class ESSequences(client: Client, config: StorageClientConfig, index: String) ex
   val indices = client.admin.indices
   val indexExistResponse = indices.prepareExists(index).get
   if (!indexExistResponse.isExists) {
-    // val settingsJson =
-    //   ("number_of_shards" -> 1) ~
-    //   ("auto_expand_replicas" -> "0-all")
     indices.prepareCreate(index).get
   }
   val typeExistResponse = indices.prepareTypesExists(index).setTypes(estype).get
@@ -41,7 +38,6 @@ class ESSequences(client: Client, config: StorageClientConfig, index: String) ex
       (estype ->
         ("_source" -> ("enabled" -> 0)) ~
         ("_all" -> ("enabled" -> 0)) ~
-        //("_type" -> ("index" -> "no")) ~
         ("enabled" -> 0))
     indices.preparePutMapping(index).setType(estype).
       setSource(compact(render(mappingJson))).get

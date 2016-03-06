@@ -32,7 +32,7 @@ fork in (ThisBuild, run) := true
 
 javacOptions in (ThisBuild, compile) ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:deprecation", "-Xlint:unchecked")
 
-elasticsearchVersion in ThisBuild := "1.7.4"
+elasticsearchVersion in ThisBuild := "2.1.1"
 
 json4sVersion in ThisBuild := "3.2.10"
 
@@ -192,3 +192,8 @@ concurrentRestrictions in Global := Seq(
   Tags.limitAll( 1 )
 )
 
+parallelExecution := false
+
+parallelExecution in Global := false
+
+testOptions in Test += Tests.Argument("-oDF")

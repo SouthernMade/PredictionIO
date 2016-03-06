@@ -34,6 +34,9 @@ libraryDependencies ++= Seq(
   "org.specs2" %% "specs2" % "2.3.13" % "test",
   "org.spark-project.akka" %% "akka-slf4j"     % "2.3.4-spark")
 
+dependencyOverrides +=   "org.slf4j" % "slf4j-log4j12" % "1.7.13"
+
+
 excludedJars in assembly <<= (fullClasspath in assembly) map { cp =>
   cp filter { _.data.getName match {
     case "asm-3.1.jar" => true
@@ -47,6 +50,7 @@ excludedJars in assembly <<= (fullClasspath in assembly) map { cp =>
 }
 
 assemblyShadeRules in assembly := Seq(
+  ShadeRule.rename("org.joda.time.base.**" -> "shadeio.@1").inLibrary("org.elasticsearch" % "elasticsearch" % elasticsearchVersion.value).inProject,
   ShadeRule.rename("org.objenesis.**" -> "shadeio.@1").inLibrary("com.esotericsoftware.kryo" % "kryo" % "2.21").inProject,
   ShadeRule.rename("com.esotericsoftware.reflectasm.**" -> "shadeio.@1").inLibrary("com.esotericsoftware.kryo" % "kryo" % "2.21").inProject,
   ShadeRule.rename("com.esotericsoftware.minlog.**" -> "shadeio.@1").inLibrary("com.esotericsoftware.kryo" % "kryo" % "2.21").inProject
