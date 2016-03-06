@@ -32,7 +32,7 @@ fork in (ThisBuild, run) := true
 
 javacOptions in (ThisBuild, compile) ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:deprecation", "-Xlint:unchecked")
 
-elasticsearchVersion in ThisBuild := "2.1.1"
+elasticsearchVersion in ThisBuild := "2.2.0"
 
 json4sVersion in ThisBuild := "3.2.10"
 
