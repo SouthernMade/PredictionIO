@@ -16,6 +16,7 @@ ELASTICSEARCH_VERSION1=1.7.5
 ELASTICSEARCH_VERSION2=2.2.0
 ELASTICSEARCH_VERSION=$ELASTICSEARCH_VERSION2
 HBASE_VERSION=1.1.3
+HADOOP_VERSION=2.4
 POSTGRES_VERSION=9.4-1204.jdbc41
 MYSQL_VERSION=5.1.37
 PIO_DIR=$HOME/PredictionIO
@@ -167,9 +168,7 @@ else
       esac
     done
 
-    es_sources=("$ES_PGSQL" "$ES_HB")
-
-    if [[ $es_sources[@] =~ "$source_setup" ]]; then
+    if [[ "$source_setup" == "$ES_PGSQL" || "$source_setup" == "$ES_HB" ]]; then
       echo -e "\033[1mPlease choose between the following Elasticsearch versions (1 or 2):\033[0m"
       select es_version in "$ELASTICSEARCH_VERSION1" "$ELASTICSEARCH_VERSION2"; do
         case ${es_version} in
@@ -338,18 +337,18 @@ mkdir ${vendors_dir}
 
 # Spark
 echo -e "\033[1;36mStarting Spark setup in:\033[0m $spark_dir"
-if [[ -e spark-${SPARK_VERSION}-bin-hadoop2.6.tgz ]]; then
-  if confirm "Delete existing spark-$SPARK_VERSION-bin-hadoop2.6.tgz?"; then
-    rm spark-${SPARK_VERSION}-bin-hadoop2.6.tgz
+if [[ -e spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz ]]; then
+  if confirm "Delete existing spark-$SPARK_VERSION-bin-hadoop${HADOOP_VERSION}.tgz?"; then
+    rm spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz
   fi
 fi
-if [[ ! -e spark-${SPARK_VERSION}-bin-hadoop2.6.tgz ]]; then
+if [[ ! -e spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz ]]; then
   echo "Downloading Spark..."
-  curl -O http://d3kbcqa49mib13.cloudfront.net/spark-${SPARK_VERSION}-bin-hadoop2.6.tgz
+  curl -O http://d3kbcqa49mib13.cloudfront.net/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz
 fi
-tar xf spark-${SPARK_VERSION}-bin-hadoop2.6.tgz
+tar xf spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz
 rm -rf ${spark_dir}
-mv spark-${SPARK_VERSION}-bin-hadoop2.6 ${spark_dir}
+mv spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION} ${spark_dir}
 
 echo "Updating: $pio_dir/conf/pio-env.sh"
 ${SED_CMD} "s|SPARK_HOME=.*|SPARK_HOME=$spark_dir|g" ${pio_dir}/conf/pio-env.sh
