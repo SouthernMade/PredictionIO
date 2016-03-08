@@ -167,7 +167,7 @@ class EngineInstanceSerializer
         JField("engineFactory", JString(i.engineFactory)) ::
         JField("batch", JString(i.batch)) ::
         JField("env", Extraction.decompose(i.env)(DefaultFormats)) ::
-        JField("sparkConf", Extraction.decompose(i.sparkConf)(DefaultFormats)) ::
+        //JField("sparkConf", Extraction.decompose(i.sparkConf)(DefaultFormats)) ::
         JField("dataSourceParams", JString(i.dataSourceParams)) ::
         JField("preparatorParams", JString(i.preparatorParams)) ::
         JField("algorithmsParams", JString(i.algorithmsParams)) ::
